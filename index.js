@@ -15,7 +15,7 @@ app.get('/users', (req, res) => {
 });
 
 //get one user by id
-app.get('/users/_id', (req, res)=>{
+app.get('/users/:id', (req, res)=>{
   const userId = req.params._id;
   let reqUser={};
   users.forEach(function(user){
@@ -40,27 +40,20 @@ app.post('/users',(req, res)=>{
   res.json(users);
 });
 
-app.put('/users/_id',(req, res)=>{
-  const userFound = users.some(user=>user._id === parseInt(req.params.userId));
-  if(userFound){
-    const updateUser = req.body;
-    users.forEach(user=>{
-      if(user._id === parseInt(req.params.userId)){
-        user.name.name = updateUser.name ? updateUser.name:user.name;
-        user.occupation = updateUser.occupation ? updateUser.occupation:user.occupation;
-        user.avatar = updateUser.avatar ? updateUser.avatar:user.avatar;
-
-        res.json({message: 'User updated', user})
-      }
-    })
-  }else{
-    res.status(400).json({Error:`No user with the ID of ${req.params.userId}`});
-  }
+app.put('/users/:id',(req, res)=>{
+  const updateUser = {
+    id: req.body._id,
+    name: req.body.name,
+    occupation: req.body.occupation,
+    avatar: req.body.avatar
+  };
+  users.push(updateUser);
+  res.json(users);
 });
 
 
-app.delete('/user/:userId', (req, res)=>{
-  const userFound = user.som(user=>user._id===parseInt(req.params.userID));
+app.delete('/user/:id', (req, res)=>{
+  const userFound = user.som(user=>user._id==req.params.userId);
   if(userFound){
     users.forEach(user=>{
       if(user._id === parseInt(req.params.userId)){
@@ -69,7 +62,7 @@ app.delete('/user/:userId', (req, res)=>{
     })
     res.send({
       message: 'User has been removed',
-      users:users.filter(user._id === parseInt(req.params.userId))
+      users: users.filter(user._id == req.params.userId)
     });
   }else{
       res.status(400).json({Error:`No user with the ID of ${req.params.userID}`});   
